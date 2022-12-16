@@ -3,3 +3,8 @@ export interface ExploreDataProps {
   location: string;
   distance: string;
 }
+
+export interface CardsDataProps {
+  img: string;
+  title: string;
+}
