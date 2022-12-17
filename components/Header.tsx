@@ -10,11 +10,14 @@ import { useState } from 'react';
 import 'react-date-range/dist/styles.css'; // main style file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import { DateRangePicker, RangeKeyDict } from 'react-date-range';
+import { useRouter } from 'next/router';
 
-export default function Header() {
+export default function Header({ placeholder }: { placeholder?: string }) {
   const [searchInput, setSearchInput] = useState<string>('');
   const [startDate, setStartDate] = useState<Date | undefined>(new Date());
   const [endDate, setEndDate] = useState<Date | undefined>(new Date());
+  const [nbrOfGuests, setNbrOfGuests] = useState<string>('1');
+  const router = useRouter();
 
   const selectionRange = {
     startDate: startDate,
@@ -22,10 +25,7 @@ export default function Header() {
     key: 'selection',
   };
 
-  const [nbrOfGuests, setNbrOfGuests] = useState<string>('1');
-
   const handleSelect = (ranges: RangeKeyDict) => {
-    console.log(ranges);
     setStartDate(ranges.selection.startDate);
     setEndDate(ranges.selection.endDate);
   };
@@ -34,9 +34,24 @@ export default function Header() {
     setSearchInput('');
   };
 
+  const search = () => {
+    router.push({
+      pathname: 'search',
+      query: {
+        location: searchInput,
+        startDate: startDate?.toISOString(),
+        endDate: endDate?.toISOString(),
+        nbrOfGuests,
+      },
+    });
+  };
+
   return (
     <header className='sticky top-0 z-50 grid grid-cols-3 shadow-md bg-white p-5 md:px-10'>
-      <div className='relative flex items-center h-10 cursor-pointer my-auto'>
+      <div
+        onClick={() => router.push('/')}
+        className='relative flex items-center h-10 cursor-pointer my-auto'
+      >
         <Image
           fill
           style={{ objectFit: 'contain', objectPosition: 'left' }}
@@ -50,7 +65,7 @@ export default function Header() {
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           type='text'
-          placeholder='Start your search'
+          placeholder={placeholder || 'Start your search'}
           className='flex-grow pl-5 bg-transparent outline-none text-sm text-gray-600 placeholder-gray-400'
         />
         <MagnifyingGlassIcon className='hidden md:inline-flex h-8 bg-red-400 text-white rounded-full p-2 cursor-pointer md:mx-2' />
@@ -92,7 +107,9 @@ export default function Header() {
             <button onClick={resetInput} className='flex-grow text-gray-500'>
               Cancel
             </button>
-            <button className='flex-grow text-red-400'>Search</button>
+            <button onClick={search} className='flex-grow text-red-400'>
+              Search
+            </button>
           </div>
         </div>
       )}
