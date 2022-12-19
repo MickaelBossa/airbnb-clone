@@ -12,6 +12,7 @@ export default function InfoCard({ data }: { data: SearchDataProps }) {
           fill
           style={{ objectFit: 'cover' }}
           src={data.img}
+          className='rounded-2xl'
         />
       </div>
 
